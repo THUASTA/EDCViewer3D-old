@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         targetPlatform:
-          - Android
+         # - Android
           - iOS
          # - StandaloneLinux64
           - StandaloneOSX
