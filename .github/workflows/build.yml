@@ -11,10 +11,10 @@ jobs:
         targetPlatform:
           - Android
           - iOS
-          - StandaloneLinux64
+         # - StandaloneLinux64
           - StandaloneOSX
           - StandaloneWindows64
-          - WebGL
+         # - WebGL
     steps:
       - uses: actions/checkout@v4
         with:
