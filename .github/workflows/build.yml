@@ -1,6 +1,6 @@
 on:
   push:
-  pull_request:
+  pull_request_target: # Needed for forked PRs
   workflow_dispatch:
 
 jobs:
