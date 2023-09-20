@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Map : MonoBehaviour
 {
     public delegate void BlockAddEvent(Vector3 position);
     public delegate void BlockRemoveEvent(Vector3 position);
