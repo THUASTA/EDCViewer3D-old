@@ -1,50 +1,50 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 namespace NovelCraft.Utilities.Messages
 {
 
     internal record CompetitionUpdate : Message
     {
-
         [JsonProperty("messageType")]
-        public override IMessage.MessageType Type => IMessage.MessageType.CompetitionUpdate;
+        public IMessage.MessageType Type { get; } = IMessage.MessageType.CompetitionUpdate;
 
         [JsonProperty("cameras")]
-        public List<Cameras> cameras { get; init; } = new();
+        public List<Camera> cameras { get; init; } = new();
 
         [JsonProperty("chunks")]
-        public List<Chunks> chunks { get; init; } = new();
+        public List<Chunk> chunks { get; init; } = new();
 
         [JsonProperty("events")]
-        public List<Events> events { get; init; } = new();
+        public List<Event> events { get; init; } = new();
 
         [JsonProperty("info")]
-        public Info info { get; init; } = new(); 
+        public Info info { get; init; } = new();
 
         [JsonProperty("mines")]
-        public List<Mines> mines { get; init; } = new();
+        public List<Mine> mines { get; init; } = new();
 
         [JsonProperty("players")]
-        public List<Players> players { get; init; } = new();  
-        
-        public record Cameras
+        public List<Player> players { get; init; } = new();
+
+        public record Camera
         {
             [JsonProperty("cameraId")]
             public int cameraId { get; init; }
 
             [JsonProperty("frameData")]
-            public string frameData { get; init; }
+            public byte[]? frameData { get; init; }
 
             [JsonProperty("height")]
             public int height { get; init; }
 
             [JsonProperty("width")]
-            public int width { get; init; }   
+            public int width { get; init; }
 
         }
 
-        public record Chunks
+        public record Chunk
         {
             [JsonProperty("chunkId")]
             public int chunkId { get; init; }
@@ -53,7 +53,7 @@ namespace NovelCraft.Utilities.Messages
             public int height { get; init; }
 
             [JsonProperty("position")]
-            public Position position { get; init; }      
+            public Position? position { get; init; }
 
             public record Position
             {
@@ -63,28 +63,28 @@ namespace NovelCraft.Utilities.Messages
                 [JsonProperty("y")]
                 public int y { get; init; }
 
-            }     
-        }     
+            }
+        }
 
-        public record Events
+        public record Event
         {
             [JsonProperty("PlayerAttackEvent")]
-            public PlayerAttackEvent playerAttackEvent { get; init; }
+            public PlayerAttackEvent? playerAttackEvent { get; init; }
 
             [JsonProperty("PlayerDigEvent")]
-            public PlayerDigEvent playerDigEvent { get; init; }
+            public PlayerDigEvent? playerDigEvent { get; init; }
 
             [JsonProperty("PlayerPickUpEvent")]
-            public PlayerPickUpEvent playerPickUpEvent { get; init; }
+            public PlayerPickUpEvent? playerPickUpEvent { get; init; }
 
             [JsonProperty("PlayerPlaceBlockEvent")]
-            public PlayerPlaceBlockEvent playerPlaceBlockEvent { get; init; }   
+            public PlayerPlaceBlockEvent? playerPlaceBlockEvent { get; init; }
 
             [JsonProperty("PlayerTryAttackEvent")]
-            public PlayerTryAttackEvent playerTryAttackEvent { get; init; }
+            public PlayerTryAttackEvent? playerTryAttackEvent { get; init; }
 
             [JsonProperty("PlayerTryUseEvent")]
-            public PlayerTryUseEvent playerTryUseEvent { get; init; }   
+            public PlayerTryUseEvent? playerTryUseEvent { get; init; }
 
             public record PlayerAttackEvent
             {
@@ -100,8 +100,8 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("targetPlayerId")]
-                public int targetPlayerId { get; init; }                                  
-            }               
+                public int targetPlayerId { get; init; }
+            }
 
             public record PlayerDigEvent
             {
@@ -117,9 +117,9 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("targetChunk")]
-                public int targetChunk { get; init; }                
-                             
-            }    
+                public int targetChunk { get; init; }
+
+            }
 
             public record PlayerPickUpEvent
             {
@@ -135,12 +135,12 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("itemType")]
-                public ItemType itemType { get; init; }                
+                public ItemType itemType { get; init; }
 
                 [JsonProperty("itemCount")]
-                public int itemCount { get; init; }        
+                public int itemCount { get; init; }
 
-                public enum ItemType       
+                public enum ItemType
                 {
                     IronIngot,
 
@@ -148,8 +148,8 @@ namespace NovelCraft.Utilities.Messages
 
                     Diamond
 
-                }                
-            }    
+                }
+            }
 
             public record PlayerPlaceBlockEvent
             {
@@ -165,13 +165,13 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("blockType")]
-                public BlockType blockType { get; init; }                      
+                public BlockType blockType { get; init; }
 
-                public enum BlockType       
+                public enum BlockType
                 {
-                   Wool 
-                }                
-            }    
+                    Wool
+                }
+            }
 
             public record PlayerTryAttackEvent
             {
@@ -187,9 +187,9 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("targetChunk")]
-                public int targetChunk { get; init; }                      
+                public int targetChunk { get; init; }
 
-            } 
+            }
 
             public record PlayerTryUseEvent
             {
@@ -205,9 +205,9 @@ namespace NovelCraft.Utilities.Messages
                 public int playerId { get; init; }
 
                 [JsonProperty("targetChunk")]
-                public int targetChunk { get; init; }                      
-                
-            }             
+                public int targetChunk { get; init; }
+
+            }
 
         }
 
@@ -227,12 +227,13 @@ namespace NovelCraft.Utilities.Messages
 
                 Battling,
 
-                Finished
+                Finished,
 
+                Ended,
             }
-        }     
+        }
 
-        public record Mines
+        public record Mine
         {
             [JsonProperty("mineId")]
             public int mineId { get; init; }
@@ -254,26 +255,26 @@ namespace NovelCraft.Utilities.Messages
             }
 
             [JsonProperty("position")]
-            public Position position { get; init; }      
+            public Position? position { get; init; }
 
             public record Position
             {
                 [JsonProperty("x")]
-                public int x { get; init; }
+                public float x { get; init; }
 
                 [JsonProperty("y")]
-                public int y { get; init; }
-                            
-            }     
-        }     
+                public float y { get; init; }
 
-        public record Players
+            }
+        }
+
+        public record Player
         {
             [JsonProperty("playerId")]
             public int playerId { get; init; }
 
             [JsonProperty("attributes")]
-            public Attributes attributes { get; init; }
+            public Attributes? attributes { get; init; }
 
             public record Attributes
             {
@@ -284,28 +285,28 @@ namespace NovelCraft.Utilities.Messages
                 public int maxHealth { get; init; }
 
                 [JsonProperty("strength")]
-                public int strength { get; init; }                
-                             
-            }     
+                public int strength { get; init; }
+
+            }
 
             [JsonProperty("health")]
-            public int health { get; init; }                  
+            public int health { get; init; }
 
             [JsonProperty("homePosition")]
-            public HomePosition homePosition { get; init; }      
+            public HomePosition? homePosition { get; init; }
 
             public record HomePosition
             {
                 [JsonProperty("x")]
-                public int x { get; init; }
+                public float x { get; init; }
 
                 [JsonProperty("y")]
-                public int y { get; init; }
-                                  
-            }     
+                public float y { get; init; }
+
+            }
 
             [JsonProperty("inventory")]
-            public Inventory inventory { get; init; }      
+            public Inventory? inventory { get; init; }
 
             public record Inventory
             {
@@ -314,21 +315,21 @@ namespace NovelCraft.Utilities.Messages
 
                 [JsonProperty("wool")]
                 public int wool { get; init; }
-                                
-            }  
+
+            }
 
             [JsonProperty("position")]
-            public Position position { get; init; }      
+            public Position? position { get; init; }
 
             public record Position
             {
                 [JsonProperty("x")]
-                public int x { get; init; }
+                public float x { get; init; }
 
                 [JsonProperty("y")]
-                public int y { get; init; }
-                                 
-            }     
-        }     
+                public float y { get; init; }
+
+            }
+        }
     }
 }
