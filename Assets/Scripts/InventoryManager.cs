@@ -52,19 +52,19 @@ public class InventoryManager : MonoBehaviour
     /// </summary>
     public static void RefreshObject()
     {
-        for (int i = 0; i < instance.transform.childCount; i++) 
-        {
-            if (instance.slotGrid.transform.childCount == 0) 
-            {
-                break;
-            }
-            Destroy(instance.slotGrid.transform.GetChild(i).gameObject);
-        }
+        //for (int i = 0; i < instance.transform.childCount; i++) 
+        //{
+        //    if (instance.slotGrid.transform.childCount == 0) 
+        //    {
+        //        break;
+        //    }
+        //    Destroy(instance.slotGrid.transform.GetChild(i).gameObject);
+        //}
 
-        for (int i = 0; i < instance.myBag.objectList.Count; i++)
-        {
-            CreatNewObject(instance.myBag.objectList[i]);
-        }
+        //for (int i = 0; i < instance.myBag.objectList.Count; i++)
+        //{
+        //    CreatNewObject(instance.myBag.objectList[i]);
+        //}
 
     }
 }

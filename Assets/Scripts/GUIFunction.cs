@@ -26,14 +26,14 @@ public class GUIFuntion : MonoBehaviour
     /// <summary>
     /// Add external server
     /// </summary>
-    private GameObject _addExternalServerWindow;
-    private TMP_InputField _addExternalServerIPText;
-    private TMP_InputField _addExternalServerPortText;
-    private Button _addExternalServerConfirmButton;
-    private Button _addExternalServerCancelButton;
+    private GameObject _connectServerWindow;
+    private TMP_InputField _connectServerIPText;
+    private TMP_InputField _connectServerPortText;
+    private Button _connectServerConfirmButton;
+    private Button _connectServerCancelButton;
 
     private Client _client;
-
+     
     private void Start()
     {
 
@@ -45,6 +45,14 @@ public class GUIFuntion : MonoBehaviour
         _resetButton = GameObject.Find("Canvas/ResetButton").GetComponent<Button>();
         _connectButton = GameObject.Find("Canvas/ConnectButton").GetComponent<Button>();
         _settingsButton = GameObject.Find("Canvas/SettingsButton").GetComponent<Button>();
+
+
+        // Add server buttons
+        _connectServerWindow = GameObject.Find("Canvas/ConnectServer/");
+        _connectServerConfirmButton = GameObject.Find("Canvas/ConnectServer/ConnectConfirmButton").GetComponent<Button>();
+        _connectServerCancelButton = GameObject.Find("Canvas/ConnectServer/ConnectCancelButton").GetComponent<Button>();
+        _connectServerIPText = GameObject.Find("Canvas/ConnectServer/Input/IP").GetComponent<TMP_InputField>();
+        _connectServerPortText = GameObject.Find("Canvas/ConnectServer/Input/Port").GetComponent<TMP_InputField>();
 
         _startButton.onClick.AddListener(() =>
         {
@@ -92,23 +100,19 @@ public class GUIFuntion : MonoBehaviour
         {
             // Play sound
             _buttonSound.Play();
-            _addExternalServerWindow.SetActive(true);
+            _connectServerWindow.SetActive(true);
+            Debug.Log("connect");
+
         });
 
-        // Add server buttons
-        _addExternalServerWindow = GameObject.Find("Canvas/ConnectServer/");
-        _addExternalServerConfirmButton = GameObject.Find("Canvas/ConnectServer/ConnectConfirmButton").GetComponent<Button>();
-        _addExternalServerCancelButton = GameObject.Find("Canvas/ConnectServer/ConnectCancelButton").GetComponent<Button>();
-        _addExternalServerIPText = GameObject.Find("Canvas/ConnectServer/Input/IP").GetComponent<TMP_InputField>();
-        _addExternalServerPortText = GameObject.Find("Canvas/ConnectServer/Input/Port").GetComponent<TMP_InputField>();
 
-        _addExternalServerConfirmButton.onClick.AddListener(() =>
+        _connectServerConfirmButton.onClick.AddListener(() =>
         {
             // Play sound
             _buttonSound.Play();
             // Get ip and port from the input field
-            string ip = _addExternalServerIPText.text;
-           if(!int.TryParse(_addExternalServerPortText.text,out int port))
+            string ip = _connectServerIPText.text;
+           if(!int.TryParse(_connectServerPortText.text,out int port))
             {
                 UnityEngine.Debug.Log("Cannot parse <port> to int");
             };
@@ -116,17 +120,23 @@ public class GUIFuntion : MonoBehaviour
 
             // TODO: Add the event handler
             //_client.AfterMessageReceiveEvent += OnAfterMessageReceiveEvent;
+            Debug.Log("confirm");
 
         });
 
-        _addExternalServerCancelButton.onClick.AddListener(() =>
+        _connectServerCancelButton.onClick.AddListener(() =>
         {
             // Play sound
             _buttonSound.Play();
             // Clear text
-            _addExternalServerIPText.text="";
-            _addExternalServerPortText.text="";
+            _connectServerIPText.text="";
+            _connectServerPortText.text="";
+
+            _connectServerWindow.SetActive(false);
+            Debug.Log("cancel");
         });
+
+        _connectServerWindow.SetActive(false);
     }
 
     void Send(IMessage message)
