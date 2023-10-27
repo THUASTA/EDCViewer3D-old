@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace NovelCraft.Utilities.Messages
+namespace EDCViewer.Messages
 {
-
     internal record CompetitionControlCommand : Message
     {
         public enum Command

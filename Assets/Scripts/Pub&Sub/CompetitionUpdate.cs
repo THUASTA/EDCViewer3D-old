@@ -2,13 +2,13 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 
-namespace NovelCraft.Utilities.Messages
+namespace EDCViewer.Messages
 {
 
     internal record CompetitionUpdate : Message
     {
         [JsonProperty("messageType")]
-        public IMessage.MessageType Type { get; } = IMessage.MessageType.CompetitionUpdate;
+        public override IMessage.MessageType Type { get; } = IMessage.MessageType.CompetitionUpdate;
 
         [JsonProperty("cameras")]
         public List<Camera> cameras { get; init; } = new();
