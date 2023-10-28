@@ -7,18 +7,18 @@ using UnityEngine;
 /// </summary>
 public class InventoryManager : MonoBehaviour
 {
-    static InventoryManager instance;
     public Inventory myBag;
     public GameObject slotGrid;
     public Slot slotPrefab;
     public ObjectDisplay Emerald;
+    public ObjectDisplay Stone;
     public delegate void ManageObject(ObjectDisplay objectDiaplay);
-    /// <summary>²¹³ä´úÂë
+    /// <summary>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// public event ManageObject OnManageObject;
     /// xxx.OnManageObject += myBag.ObjectManager;
     /// xxx.OnManageObject += RefreshObject;
     /// </summary>
-    
+    /*
     private void Awake()
     {
         if (instance != null)
@@ -26,7 +26,7 @@ public class InventoryManager : MonoBehaviour
             Destroy(this);
         }
         instance = this;
-    }
+    }*/
 
     void Start()
     {
@@ -36,21 +36,22 @@ public class InventoryManager : MonoBehaviour
     {
         
         myBag.ObjectManager(Emerald);
+        myBag.ObjectManager(Stone);
         RefreshObject();
     }
-    public static void CreatNewObject(ObjectDisplay objectDiaplay)
+    public void CreatNewObject(ObjectDisplay objectDiaplay)
     {
-            Slot newObject = Instantiate(instance.slotPrefab, instance.slotGrid.transform.position, Quaternion.identity);
-            newObject.gameObject.transform.SetParent(instance.slotGrid.transform);
+            Slot newObject = Instantiate(slotPrefab, slotGrid.transform.position, Quaternion.identity);
+            newObject.gameObject.transform.SetParent(slotGrid.transform);
             newObject.slotObject = objectDiaplay;
             newObject.slotImage.sprite = objectDiaplay.objectImage;
             newObject.slotNum.text = objectDiaplay.objectHeld.ToString();
     }
 
     /// <summary>
-    /// Èç¹û»ñµÃÖØ¸´ÎïÆ·£¬¸üÐÂ±³°üÏÔÊ¾
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
     /// </summary>
-    public static void RefreshObject()
+    public void RefreshObject()
     {
         //for (int i = 0; i < instance.transform.childCount; i++) 
         //{
@@ -65,6 +66,5 @@ public class InventoryManager : MonoBehaviour
         //{
         //    CreatNewObject(instance.myBag.objectList[i]);
         //}
-
     }
 }
