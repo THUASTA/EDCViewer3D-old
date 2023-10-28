@@ -78,42 +78,55 @@ public class GUIFuntion : MonoBehaviour
         {
             // Play sound
             _buttonSound.Play();
-            // Send packet to the server
-            CompetitionControlCommand competitionControlCommand = new()
+            if (Client is not null)
             {
-                command = CompetitionControlCommand.Command.Start
-            };
-            Client.Send(competitionControlCommand);
+                // Send packet to the server
+                CompetitionControlCommand competitionControlCommand = new()
+                {
+                    command = CompetitionControlCommand.Command.Start
+                };
+                Client.Send(competitionControlCommand);
+            }
         });
 
         _endButton.onClick.AddListener(() =>
         {
             // Play sound
             _buttonSound.Play();
-            // Send packet to the server
-            CompetitionControlCommand competitionControlCommand = new()
+            if (Client is not null)
             {
-                command = CompetitionControlCommand.Command.End
-            };
-            Client.Send(competitionControlCommand);
+                // Send packet to the server
+                CompetitionControlCommand competitionControlCommand = new()
+                {
+                    command = CompetitionControlCommand.Command.End
+                };
+                Client.Send(competitionControlCommand);
+            }
         });
 
         _resetButton.onClick.AddListener(() =>
         {
             // Play sound
             _buttonSound.Play();
-            // Send packet to the server
-            CompetitionControlCommand competitionControlCommand = new()
+            if (Client is not null)
             {
-                command = CompetitionControlCommand.Command.Reset
-            };
-            Client.Send(competitionControlCommand);
+                // Send packet to the server
+                CompetitionControlCommand competitionControlCommand = new()
+                {
+                    command = CompetitionControlCommand.Command.Reset
+                };
+                Client.Send(competitionControlCommand);
+            }
         });
 
         _settingsButton.onClick.AddListener(() =>
         {
             // Play sound
             _buttonSound.Play();
+            if (Client is not null)
+            {
+
+            }
         });
 
         _connectButton.onClick.AddListener(() =>
