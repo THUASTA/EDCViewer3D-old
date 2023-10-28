@@ -119,26 +119,15 @@ namespace EDCViewer.Messages
         }
 
 
-        public record availableCameras
-        {
-            [JsonProperty("Items:")]
-            public int Items { get; init; }
-        }
-
-        public record availableSerialPorts
-        {
-            [JsonProperty("Items:")]
-            public int Items { get; init; }
-        }        
-
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type => IMessage.MessageType.HostConfigurationFromServer;
 
         [JsonProperty("availableCameras")]
-        public List<availableCameras> AvailableCameras { get; init; } = new();
+        public List<int> AvailableCameras { get; init; } = new();
 
         [JsonProperty("availableSerialPorts")]
-        public List<availableSerialPorts> AvailableSerialPorts { get; init; } = new(); 
+        public List<string> AvailableSerialPorts { get; init; } = new(); 
 
         [JsonProperty("players")]
         public List<PlayerInfo> playerInfo { get; init; } = new();

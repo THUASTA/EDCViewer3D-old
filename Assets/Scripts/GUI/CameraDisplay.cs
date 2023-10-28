@@ -1,12 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using EDCViewer.Messages;
-using EDCViewer.Client;
-using UnityEditor.PackageManager;
-using Client = EDCViewer.Client.Client;
-using System.Linq;
 
 public class CameraDisplay : MonoBehaviour
 {
@@ -20,14 +15,14 @@ public class CameraDisplay : MonoBehaviour
             RawImageList.Add(rawImage);
         }
         //CameraListObj.SetActive(false);
-
+         
     }
 
     // This method is called to display the camera image
     public void DisplayCameraImage(CompetitionUpdate competitionUpdate)
     {
-        UnityMainThreadDispatcher.Enqueue(() =>
-        {
+        //UnityMainThreadDispatcher.Enqueue(() =>
+        //{
             for (int i = 0; i < competitionUpdate.cameras.Count; i++)
             {
                 //int cameraId = competitionUpdate.cameras[i].cameraId;
@@ -55,7 +50,7 @@ public class CameraDisplay : MonoBehaviour
                 // Set the texture to the RawImage component
                 RawImageList[i].texture = texture; 
             }
-        });
+        //});
     }
 
     public Texture2D DecodeBase64Jpeg(string base64Data)

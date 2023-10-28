@@ -5,6 +5,7 @@ namespace EDCViewer.Messages
 {
     public record CompetitionUpdate : Message
     {
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type { get; } = IMessage.MessageType.CompetitionUpdate;
 

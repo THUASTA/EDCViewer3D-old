@@ -11,6 +11,7 @@ namespace EDCViewer.Messages
 
     public abstract record Message : IMessage
     {
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public abstract IMessage.MessageType Type { get; }
 

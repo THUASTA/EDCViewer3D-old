@@ -3,14 +3,12 @@ using System.Collections.Concurrent;
 using EDCViewer.Messages;
 using UnityEngine.UI;
 using TMPro;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using EDCViewer.Client;
-using UnityEditor.Experimental.GraphView;
 using System.Net.WebSockets;
 using System.Threading;
-using UnityEditor.PackageManager;
 using Client = EDCViewer.Client.Client;
+using System.Collections.Generic;
+using static EDCViewer.Messages.CompetitionControlCommand;
+using System;
 
 public class GUIFuntion : MonoBehaviour
 {
@@ -52,7 +50,19 @@ public class GUIFuntion : MonoBehaviour
     private GameObject _settingsWindow;
     private Button _settingsConfirmButton;
     private Button _settingsCancelButton;
-    
+
+    /// <summary>
+    /// The slider which can change the record playing rate
+    /// </summary>
+    private List<TMP_Text> _hueMinText;
+    private List<TMP_Text> _hueMaxText;
+    private List<TMP_Text> _saturationMinText;
+    private List<TMP_Text> _saturationMaxText;
+    private List<TMP_Text> _valueMinText;
+    private List<TMP_Text> _valueMaxText;
+
+    private List<TMP_Dropdown> _cameraDropdown;
+
     public Client Client { get; private set; }
 
      
@@ -86,6 +96,37 @@ public class GUIFuntion : MonoBehaviour
         _settingsWindow = GameObject.Find("Canvas/SettingsWindow/");
         _settingsConfirmButton = GameObject.Find("Canvas/SettingsWindow/ConfirmButton").GetComponent<Button>();
         _settingsCancelButton = GameObject.Find("Canvas/SettingsWindow/CancelButton").GetComponent<Button>();
+
+        _hueMinText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Hue/Min/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Hue/Min/Text Area/Text").GetComponent<TMP_Text>()
+        };
+        _hueMaxText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Hue/Max/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Hue/Max/Text Area/Text").GetComponent<TMP_Text>()
+        };
+        _saturationMinText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Saturation/Min/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Saturation/Min/Text Area/Text").GetComponent<TMP_Text>()
+        };
+        _saturationMaxText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Saturation/Max/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Saturation/Max/Text Area/Text").GetComponent<TMP_Text>()
+        };
+        _valueMinText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Value/Min/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Value/Min/Text Area/Text").GetComponent<TMP_Text>()
+        };
+        _valueMaxText = new() {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Color/Value/Max/Text Area/Text").GetComponent<TMP_Text>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Color/Value/Max/Text Area/Text").GetComponent<TMP_Text>()
+        };
+
+        _cameraDropdown = new()
+        {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Camera").GetComponent<TMP_Dropdown>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Camera").GetComponent<TMP_Dropdown>(),
+        };
 
         _startButton.onClick.AddListener(() =>
         {
@@ -138,6 +179,12 @@ public class GUIFuntion : MonoBehaviour
             _buttonSound.Play();
             if (Client is not null)
             {
+                CompetitionControlCommand getConfigMessage = new CompetitionControlCommand()
+                {
+                    command = CompetitionControlCommand.Command.GetHostConfiguration
+                };
+                Client.Send(getConfigMessage);
+
                 _settingsWindow.SetActive(true);
             }
         });
@@ -197,9 +244,14 @@ public class GUIFuntion : MonoBehaviour
             // Play sound
             _buttonSound.Play();
             // TODO
+            // Send packet
+            if(Client is not null)
+            {
 
-            _settingsWindow.SetActive(false);
-            Debug.Log("confirm settings");
+
+                _settingsWindow.SetActive(false);
+                Debug.Log("confirm settings");
+            }
 
         });
 
@@ -236,10 +288,49 @@ public class GUIFuntion : MonoBehaviour
     }
     public void AfterMessageReceivedEventHandler(object? sender, IMessage message)
     {
-        if (message is CompetitionUpdate competitionUpdate)
+        UnityMainThreadDispatcher.Enqueue(() =>
         {
-          _cameraDisplay.DisplayCameraImage(competitionUpdate);
-        }
+            if (message is CompetitionUpdate competitionUpdate)
+            {
+                _cameraDisplay.DisplayCameraImage(competitionUpdate);
+            }
+            if (message is HostConfigurationFromServer configMessage)
+            {
+                // Update info
+                for (int i = 0; i < Math.Min(2, configMessage.playerInfo.Count); i++)
+                {
+                    int hueCenter = configMessage.playerInfo[i].camera.recognition.HueCenter;
+                    int hueRange = configMessage.playerInfo[i].camera.recognition.HueRange;
+                    int SaturationCenter = configMessage.playerInfo[i].camera.recognition.SaturationCenter;
+                    int SaturationRange = configMessage.playerInfo[i].camera.recognition.SaturationRange;
+                    int ValueCenter = configMessage.playerInfo[i].camera.recognition.ValueCenter;
+                    int ValueRange = configMessage.playerInfo[i].camera.recognition.ValueCenter;
+
+                    _hueMinText[i].text = Math.Max(0, hueCenter - hueRange / 2).ToString();
+                    _hueMaxText[i].text = Math.Min(255, hueCenter + hueRange / 2).ToString();
+                    _saturationMinText[i].text = Math.Max(0, SaturationCenter - SaturationRange / 2).ToString();
+                    _saturationMaxText[i].text = Math.Min(255, SaturationCenter + SaturationRange / 2).ToString();
+                    _valueMinText[i].text = Math.Max(0, ValueCenter - ValueRange / 2).ToString();
+                    _valueMaxText[i].text = Math.Min(255, ValueCenter + ValueRange / 2).ToString();
+
+
+                }
+
+                // Update camera
+                List<string> cameraList = new();
+                foreach (int camera in configMessage.AvailableCameras)
+                {
+                    cameraList.Add(camera.ToString());
+                }
+                for (int i = 0; i < 2; i++)
+                {
+                    _cameraDropdown[i].ClearOptions();
+                    _cameraDropdown[i].AddOptions(cameraList);
+                }
+                // Update Port
+
+            }
+        });
     }
     private void Update()
     {

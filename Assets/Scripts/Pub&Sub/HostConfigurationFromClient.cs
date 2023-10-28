@@ -119,6 +119,7 @@ namespace EDCViewer.Messages
 
         
 
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type => IMessage.MessageType.HostConfigurationFromClient;
 
