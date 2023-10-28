@@ -10,7 +10,7 @@ using EDCViewer.Messages;
 namespace EDCViewer.Client
 {
 
-    internal class Client : IClient
+    public class Client : IClient
     {
         public event EventHandler<IMessage>? AfterMessageReceiveEvent;
 
@@ -85,7 +85,6 @@ namespace EDCViewer.Client
                     if (_messageQueue.TryDequeue(out IMessage? message))
                     {
                         ClientWebSocket.SendAsync(GetBuffer(message.JsonString), WebSocketMessageType.Text, true, CancellationToken.None);
-                        UnityEngine.Debug.Log(message.JsonString);
                     }
                 }
                 UnityEngine.Debug.Log("task end!");
@@ -155,13 +154,13 @@ namespace EDCViewer.Client
             {
                 IMessage message = Parser.Parse(
                   System.Text.Encoding.UTF8.GetString(_receiveBuffer[..count]));
-
                 AfterMessageReceiveEvent?.Invoke(this, message);
+
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.Log($"{System.Text.Encoding.UTF8.GetString(_receiveBuffer[..Math.Min(1024, count)])}");
-                UnityEngine.Debug.LogError($"Failed to parse message: {e.Message}: {System.Text.Encoding.UTF8.GetString(_receiveBuffer[..Math.Min(1024, count)])}...");
+                
+                UnityEngine.Debug.Log($"{e.StackTrace}\nFailed to parse message: {e.Message}: {System.Text.Encoding.UTF8.GetString(_receiveBuffer[..Math.Min(1024, count)])}...");
             }
         }
 

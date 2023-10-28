@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EDCViewer.Messages
 {
-    internal record CompetitionControlCommand : Message
+    public record CompetitionControlCommand : Message
     {
         public enum Command
         {

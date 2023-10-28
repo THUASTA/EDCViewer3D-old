@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EDCViewer.Messages
 {
-    internal record HostConfigurationFromClient : Message
+    public record HostConfigurationFromClient : Message
     {
         public record PlayerInfo
         {

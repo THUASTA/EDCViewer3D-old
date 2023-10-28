@@ -1,11 +1,9 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 namespace EDCViewer.Messages
 {
-
-    internal record CompetitionUpdate : Message
+    public record CompetitionUpdate : Message
     {
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type { get; } = IMessage.MessageType.CompetitionUpdate;
@@ -34,7 +32,7 @@ namespace EDCViewer.Messages
             public int cameraId { get; init; }
 
             [JsonProperty("frameData")]
-            public byte[]? frameData { get; init; }
+            public string frameData { get; init; }
 
             [JsonProperty("height")]
             public int height { get; init; }
@@ -69,22 +67,22 @@ namespace EDCViewer.Messages
         public record Event
         {
             [JsonProperty("PlayerAttackEvent")]
-            public PlayerAttackEvent? playerAttackEvent { get; init; }
+            public PlayerAttackEvent? playerAttackEvent { get; set; }
 
             [JsonProperty("PlayerDigEvent")]
-            public PlayerDigEvent? playerDigEvent { get; init; }
+            public PlayerDigEvent? playerDigEvent { get; set; }
 
             [JsonProperty("PlayerPickUpEvent")]
-            public PlayerPickUpEvent? playerPickUpEvent { get; init; }
+            public PlayerPickUpEvent? playerPickUpEvent { get; set; }
 
             [JsonProperty("PlayerPlaceBlockEvent")]
-            public PlayerPlaceBlockEvent? playerPlaceBlockEvent { get; init; }
+            public PlayerPlaceBlockEvent? playerPlaceBlockEvent { get; set; }
 
             [JsonProperty("PlayerTryAttackEvent")]
-            public PlayerTryAttackEvent? playerTryAttackEvent { get; init; }
+            public PlayerTryAttackEvent? playerTryAttackEvent { get; set; }
 
             [JsonProperty("PlayerTryUseEvent")]
-            public PlayerTryUseEvent? playerTryUseEvent { get; init; }
+            public PlayerTryUseEvent? playerTryUseEvent { get; set; }
 
             public record PlayerAttackEvent
             {
@@ -94,7 +92,7 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerAttack Type { get; init; }
+                public PlayerAttack Type => PlayerAttack.PlayerAttack;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
@@ -111,7 +109,7 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerDig Type { get; init; }
+                public PlayerDig Type => PlayerDig.PlayerDig;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
@@ -129,7 +127,7 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerPickUp Type;
+                public PlayerPickUp Type => PlayerPickUp.PlayerPickUp;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
@@ -159,13 +157,13 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerPlaceBlock Type { get; init; }
+                public PlayerPlaceBlock Type => PlayerPlaceBlock.PlayerPlaceBlock;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
 
                 [JsonProperty("blockType")]
-                public BlockType blockType { get; init; }
+                public BlockType blockType => BlockType.Wool;
 
                 public enum BlockType
                 {
@@ -181,7 +179,7 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerTryAttack Type { get; init; }
+                public PlayerTryAttack Type => PlayerTryAttack.PlayerTryAttack;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
@@ -199,7 +197,7 @@ namespace EDCViewer.Messages
                 }
 
                 [JsonProperty("eventType")]
-                public PlayerTryUse Type { get; init; }
+                public PlayerTryUse Type => PlayerTryUse.PlayerTryUse;
 
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
@@ -236,7 +234,7 @@ namespace EDCViewer.Messages
         public record Mine
         {
             [JsonProperty("mineId")]
-            public int mineId { get; init; }
+            public string? mineId { get; init; }
 
             [JsonProperty("accumulatedOreCount")]
             public int accumulatedOreCount { get; init; }
@@ -272,6 +270,9 @@ namespace EDCViewer.Messages
         {
             [JsonProperty("playerId")]
             public int playerId { get; init; }
+
+            [JsonProperty("cameraId")]
+            public int cameraId { get; init; }
 
             [JsonProperty("attributes")]
             public Attributes? attributes { get; init; }
@@ -332,4 +333,4 @@ namespace EDCViewer.Messages
             }
         }
     }
-}
+    }

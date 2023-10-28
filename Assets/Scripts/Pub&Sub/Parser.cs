@@ -3,6 +3,7 @@ using Newtonsoft;
 using Newtonsoft.Json.Linq;
 using System;
 using EDCViewer.Messages;
+using System.Diagnostics;
 
 namespace EDCViewer.Messages
 {
@@ -24,8 +25,11 @@ namespace EDCViewer.Messages
         /// </summary>
         public static IMessage Parse(string jsonString)
         {
-            EmptyMessage result = JsonConvert.DeserializeObject<EmptyMessage>(jsonString)!;
-            IMessage.MessageType type = (IMessage.MessageType)(int)result.Type!;
+            JObject json = JObject.Parse(jsonString); // 解析 JSON 字符串
+            string messageTypeString = (string)json["messageType"]; // 获取 "messageType" 字段的值
+
+            IMessage.MessageType type = IMessage.ConvertToMessageType(messageTypeString);
+
             return type switch
             {
                 IMessage.MessageType.CompetitionControlCommand =>

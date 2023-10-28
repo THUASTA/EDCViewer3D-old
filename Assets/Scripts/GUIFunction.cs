@@ -9,6 +9,8 @@ using EDCViewer.Client;
 using UnityEditor.Experimental.GraphView;
 using System.Net.WebSockets;
 using System.Threading;
+using UnityEditor.PackageManager;
+using Client = EDCViewer.Client.Client;
 
 public class GUIFuntion : MonoBehaviour
 {
@@ -19,6 +21,8 @@ public class GUIFuntion : MonoBehaviour
     private Button _resetButton;
     private Button _connectButton;
     private Button _settingsButton;
+    private Button _calibrateButton;
+    private Button _cameraButton;
 
     /// <summary>
     /// Button sound controller
@@ -33,11 +37,20 @@ public class GUIFuntion : MonoBehaviour
     private TMP_InputField _connectServerPortText;
     private Button _connectServerConfirmButton;
     private Button _connectServerCancelButton;
+    private CameraDisplay _cameraDisplay;
 
-    private Client _client;
+
+    /// <summary>
+    /// Frame data
+    /// </summary>
+    private GameObject _frameDataWindow;
+
+    public Client Client { get; private set; }
+
      
     private void Start()
     {
+        _cameraDisplay= GetComponent<CameraDisplay>();
 
         _buttonSound = GameObject.Find("ButtonSound").GetComponent<AudioSource>();
         _buttonSound.clip ??= Resources.Load<AudioClip>("Music/ButtonClick");
@@ -47,7 +60,8 @@ public class GUIFuntion : MonoBehaviour
         _resetButton = GameObject.Find("Canvas/ResetButton").GetComponent<Button>();
         _connectButton = GameObject.Find("Canvas/ConnectButton").GetComponent<Button>();
         _settingsButton = GameObject.Find("Canvas/SettingsButton").GetComponent<Button>();
-
+        _calibrateButton = GameObject.Find("Canvas/CalibrateButton").GetComponent<Button>();
+        _cameraButton = GameObject.Find("Canvas/CameraButton").GetComponent<Button>();
 
         // Add server buttons
         _connectServerWindow = GameObject.Find("Canvas/ConnectServer/");
@@ -55,6 +69,10 @@ public class GUIFuntion : MonoBehaviour
         _connectServerCancelButton = GameObject.Find("Canvas/ConnectServer/ConnectCancelButton").GetComponent<Button>();
         _connectServerIPText = GameObject.Find("Canvas/ConnectServer/Input/IP").GetComponent<TMP_InputField>();
         _connectServerPortText = GameObject.Find("Canvas/ConnectServer/Input/Port").GetComponent<TMP_InputField>();
+        _connectServerIPText.text = "127.0.0.1";
+        _connectServerPortText.text = "8080";
+
+        _frameDataWindow = _cameraDisplay.CameraListObj;
 
         _startButton.onClick.AddListener(() =>
         {
@@ -65,7 +83,7 @@ public class GUIFuntion : MonoBehaviour
             {
                 command = CompetitionControlCommand.Command.Start
             };
-            _client.Send(competitionControlCommand);
+            Client.Send(competitionControlCommand);
         });
 
         _endButton.onClick.AddListener(() =>
@@ -77,7 +95,7 @@ public class GUIFuntion : MonoBehaviour
             {
                 command = CompetitionControlCommand.Command.End
             };
-            _client.Send(competitionControlCommand);
+            Client.Send(competitionControlCommand);
         });
 
         _resetButton.onClick.AddListener(() =>
@@ -89,7 +107,7 @@ public class GUIFuntion : MonoBehaviour
             {
                 command = CompetitionControlCommand.Command.Reset
             };
-            _client.Send(competitionControlCommand);
+            Client.Send(competitionControlCommand);
         });
 
         _settingsButton.onClick.AddListener(() =>
@@ -107,6 +125,13 @@ public class GUIFuntion : MonoBehaviour
 
         });
 
+        _cameraButton.onClick.AddListener(() =>
+        {
+            // Play sound
+            _buttonSound.Play();
+
+            _frameDataWindow.SetActive(!_frameDataWindow.activeInHierarchy);
+        });
 
         _connectServerConfirmButton.onClick.AddListener(() =>
         {
@@ -118,10 +143,12 @@ public class GUIFuntion : MonoBehaviour
             {
                 UnityEngine.Debug.Log("Cannot parse <port> to int");
             };
-            _client = new(ip, port);
+            Client = new Client(ip, port);
+
+            Client.AfterMessageReceiveEvent += AfterMessageReceivedEventHandler;
 
             // TODO: Add the event handler
-            //_client.AfterMessageReceiveEvent += OnAfterMessageReceiveEvent;
+            //Client.AfterMessageReceiveEvent += OnAfterMessageReceiveEvent;
             _connectServerWindow.SetActive(false);
             Debug.Log("confirm");
 
@@ -143,13 +170,13 @@ public class GUIFuntion : MonoBehaviour
     }
     public void QuitClient()
     {
-        if (_client is not null)
+        if (Client is not null)
         // Close websocket
         {
-            _client.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+            Client.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
                                                 "Closing",
                                                 CancellationToken.None);
-            _client.CloseReceiveMessageTask();
+            Client.CloseReceiveMessageTask();
         } 
     }
     private void OnApplicationQuit()
@@ -159,6 +186,13 @@ public class GUIFuntion : MonoBehaviour
     void Send(IMessage message)
     {
         _messageQueue.Enqueue(message);
+    }
+    public void AfterMessageReceivedEventHandler(object? sender, IMessage message)
+    {
+        if (message is CompetitionUpdate competitionUpdate)
+        {
+          _cameraDisplay.DisplayCameraImage(competitionUpdate);
+        }
     }
     private void Update()
     {

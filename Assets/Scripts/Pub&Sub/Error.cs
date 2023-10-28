@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace EDCViewer.Messages
 {
 
-    internal record Error : Message
+    public record Error : Message
     {
 
         [JsonProperty("messageType")]

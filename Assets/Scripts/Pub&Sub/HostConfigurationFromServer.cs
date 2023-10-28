@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace EDCViewer.Messages
 {
 
-    internal record HostConfigurationFromServer : Message
+    public record HostConfigurationFromServer : Message
     {
         public record PlayerInfo
         {
