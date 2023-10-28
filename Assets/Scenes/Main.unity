@@ -6451,10 +6451,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9d7ca94659c93643827619f81b170b5, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1430880635}
+      addedObject: {fileID: 1430880637}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9d7ca94659c93643827619f81b170b5, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1430880637}
+      addedObject: {fileID: 1430880639}
   m_SourcePrefab: {fileID: 100100000, guid: d9d7ca94659c93643827619f81b170b5, type: 3}
 --- !u!1 &386843860 stripped
 GameObject:
@@ -17484,22 +17484,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1427878838}
   m_CullTransparentMesh: 1
---- !u!111 &1430880635
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386843860}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 7400000, guid: a6d529cc03253534b8901948016822ed, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!114 &1430880637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17512,7 +17496,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98be3c1270816954e8047400711dfec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animation: {fileID: 1430880635}
+  Steve: {fileID: 386843860}
+  Arrow: {fileID: 0}
+--- !u!95 &1430880639
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 386843860}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: d9d7ca94659c93643827619f81b170b5, type: 3}
+  m_Controller: {fileID: 9100000, guid: e986f0ccb8e3c35419a01150668ee7a7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1436521291
 GameObject:
   m_ObjectHideFlags: 0
@@ -21861,6 +21867,7 @@ MonoBehaviour:
   slotGrid: {fileID: 305900217}
   slotPrefab: {fileID: -6121285814697188200, guid: 9b23774a0a907a749a312a80d21073d8, type: 3}
   Emerald: {fileID: 11400000, guid: 3bd78505f22572d40ad9e519a2f8b96a, type: 2}
+  Stone: {fileID: 0}
 --- !u!114 &1893479347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21913,6 +21920,7 @@ MonoBehaviour:
   slotGrid: {fileID: 394442838}
   slotPrefab: {fileID: -6121285814697188200, guid: 9b23774a0a907a749a312a80d21073d8, type: 3}
   Emerald: {fileID: 11400000, guid: 3bd78505f22572d40ad9e519a2f8b96a, type: 2}
+  Stone: {fileID: 0}
 --- !u!1 &1897056612
 GameObject:
   m_ObjectHideFlags: 0

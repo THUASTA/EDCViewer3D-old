@@ -34,10 +34,9 @@ public class InventoryManager : MonoBehaviour
     }
     void Update()
     {
-        
-        myBag.ObjectManager(Emerald);
-        myBag.ObjectManager(Stone);
-        RefreshObject();
+        //myBag.ObjectManager(Emerald);
+        //myBag.ObjectManager(Stone);
+        //RefreshObject();
     }
     public void CreatNewObject(ObjectDisplay objectDiaplay)
     {
