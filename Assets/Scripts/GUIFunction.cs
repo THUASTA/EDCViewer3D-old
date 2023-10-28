@@ -7,6 +7,8 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using EDCViewer.Client;
 using UnityEditor.Experimental.GraphView;
+using System.Net.WebSockets;
+using System.Threading;
 
 public class GUIFuntion : MonoBehaviour
 {
@@ -120,6 +122,7 @@ public class GUIFuntion : MonoBehaviour
 
             // TODO: Add the event handler
             //_client.AfterMessageReceiveEvent += OnAfterMessageReceiveEvent;
+            _connectServerWindow.SetActive(false);
             Debug.Log("confirm");
 
         });
@@ -138,7 +141,21 @@ public class GUIFuntion : MonoBehaviour
 
         _connectServerWindow.SetActive(false);
     }
-
+    public void QuitClient()
+    {
+        if (_client is not null)
+        // Close websocket
+        {
+            _client.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                                                "Closing",
+                                                CancellationToken.None);
+            _client.CloseReceiveMessageTask();
+        } 
+    }
+    private void OnApplicationQuit()
+    {
+        QuitClient();
+    }
     void Send(IMessage message)
     {
         _messageQueue.Enqueue(message);

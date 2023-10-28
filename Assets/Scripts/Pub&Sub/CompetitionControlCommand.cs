@@ -15,13 +15,14 @@ namespace EDCViewer.Messages
 
             GetHostConfiguration
         }
-
+        [JsonConverter(typeof(CommandEnumConverter))] 
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type => IMessage.MessageType.CompetitionControlCommand;
 
         [JsonProperty("token")]
         public string Token { get; init; } = string.Empty;
 
+        [JsonConverter(typeof(CommandEnumConverter))] 
         [JsonProperty("command")]
         public Command command { get; init; } = new();
     }

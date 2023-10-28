@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,7 +49,14 @@ namespace EDCViewer.Client
         public Client(string host, int port)
         {
             _uri = new($"ws://{host}:{port}");
-            ClientWebSocket = TryConnect();
+
+            ClientWebSocket = TryConnect(2000,3);
+            if(ClientWebSocket is null)
+            {
+                UnityEngine.Debug.Log($"cannot connect ws://{host}:{port}");
+                return;
+            }
+
             Console.WriteLine("Connected to server");
 
             _byteCountTimer = new System.Timers.Timer(ByteCountPeriod);
@@ -77,6 +85,7 @@ namespace EDCViewer.Client
                     if (_messageQueue.TryDequeue(out IMessage? message))
                     {
                         ClientWebSocket.SendAsync(GetBuffer(message.JsonString), WebSocketMessageType.Text, true, CancellationToken.None);
+                        UnityEngine.Debug.Log(message.JsonString);
                     }
                 }
                 UnityEngine.Debug.Log("task end!");
@@ -130,7 +139,7 @@ namespace EDCViewer.Client
             catch (Exception e)
             {
                 Console.WriteLine($"Failed to receive message: {e.Message}");
-                ClientWebSocket = TryConnect();
+                ClientWebSocket = TryConnect(2000,3);
                 return;
             }
 
@@ -156,26 +165,31 @@ namespace EDCViewer.Client
             }
         }
 
-        private ClientWebSocket TryConnect()
+        private ClientWebSocket TryConnect(int timeout,int tryConnectCount)
         {
             ClientWebSocket clientWebSocket = new();
-            UnityEngine.Debug.LogError($"Trying to connect to server at {_uri}...");
+            UnityEngine.Debug.Log($"Trying to connect to server at {_uri}...");
 
-            while (!_isWebsocketCancelled)
+            int connectCount = 0;
+            while (!_isWebsocketCancelled && tryConnectCount > connectCount)
             {
                 try
                 {
-
-                    clientWebSocket.ConnectAsync(_uri, CancellationToken.None).Wait();
+                    clientWebSocket.ConnectAsync(_uri, CancellationToken.None).Wait(timeout);
                     break;
                 }
                 catch (Exception e)
                 {
-                    UnityEngine.Debug.LogError($"Failed to connect to server: {e.Message}");
-                    clientWebSocket = new ClientWebSocket();
+                    UnityEngine.Debug.Log($"Failed to connect to server: {e.Message}");
+                    clientWebSocket = null;
                 }
-
                 UnityEngine.Debug.Log("Retrying...");
+                connectCount++;
+            }
+
+            if(tryConnectCount == connectCount)
+            {
+                clientWebSocket = null;
             }
 
             return clientWebSocket;
