@@ -5,10 +5,59 @@ using UnityEngine;
 public class SteveAnimation : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Animation animation;
-
-    void Run()
+    public GameObject Steve;
+    public GameObject Arrow;
+    Animator _ator;
+    void Start()
     {
-        animation.Play("Run");
+        _ator = Steve.GetComponent<Animator>();
+    }
+
+    
+    void Run(Vector3 target,float speed)
+    {
+        if(Steve.transform.position != target)
+        {
+            float RotationSpeed = 1f;
+            Steve.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(target), RotationSpeed);
+            Steve.transform.position=Vector3.MoveTowards(transform.position,target, speed * Time.deltaTime);
+            _ator.Play("SteveRun");
+        }
+    }
+    void Dig()
+    {
+        _ator.Play("SteveDig");
+    }
+    void Attack(Vector3 target)
+    {
+        float RotationSpeed = 1f;
+        Steve.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(target), RotationSpeed);
+        GameObject MyArrow = Instantiate(Arrow, Steve.transform.position, Quaternion.identity);
+        _ator.Play("SteveAttack");
+        StartCoroutine(ArrowFly(target,MyArrow));
+    }
+    IEnumerator ArrowFly(Vector3 target,GameObject MyArrow)
+    {
+        float speed = 10;
+        bool isMove = true;
+        float distanceToTarget = Vector3.Distance(MyArrow.transform.position, target);
+        while (isMove)
+        {
+            MyArrow.transform.LookAt(target);
+            float angle = Mathf.Min(1, Vector3.Distance(MyArrow.transform.position, target) / distanceToTarget) * 45;
+            MyArrow.transform.rotation = MyArrow.transform.rotation * Quaternion.Euler(Mathf.Clamp(-angle, -42, 42), 0, 0);
+            float currentDistance = Vector3.Distance(MyArrow.transform.position, target);
+            if (currentDistance < 0.5f)
+            {
+                isMove = false;
+            }
+            MyArrow.transform.Translate(Vector3.forward * Mathf.Min(speed * Time.deltaTime, currentDistance));
+            yield return null;
+            if(isMove == false)
+            {
+                MyArrow.transform.position = target;
+            }
+        }
+        GameObject.Destroy(MyArrow);
     }
 }
