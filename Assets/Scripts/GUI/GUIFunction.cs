@@ -40,11 +40,19 @@ public class GUIFuntion : MonoBehaviour
     private CameraDisplay _cameraDisplay;
 
 
+
     /// <summary>
     /// Frame data
     /// </summary>
     private GameObject _frameDataWindow;
 
+    /// <summary>
+    /// Settings Window
+    /// </summary>
+    private GameObject _settingsWindow;
+    private Button _settingsConfirmButton;
+    private Button _settingsCancelButton;
+    
     public Client Client { get; private set; }
 
      
@@ -73,6 +81,11 @@ public class GUIFuntion : MonoBehaviour
         _connectServerPortText.text = "8080";
 
         _frameDataWindow = _cameraDisplay.CameraListObj;
+
+        // Settings window
+        _settingsWindow = GameObject.Find("Canvas/SettingsWindow/");
+        _settingsConfirmButton = GameObject.Find("Canvas/SettingsWindow/ConfirmButton").GetComponent<Button>();
+        _settingsCancelButton = GameObject.Find("Canvas/SettingsWindow/CancelButton").GetComponent<Button>();
 
         _startButton.onClick.AddListener(() =>
         {
@@ -125,7 +138,7 @@ public class GUIFuntion : MonoBehaviour
             _buttonSound.Play();
             if (Client is not null)
             {
-
+                _settingsWindow.SetActive(true);
             }
         });
 
@@ -142,7 +155,7 @@ public class GUIFuntion : MonoBehaviour
         {
             // Play sound
             _buttonSound.Play();
-
+            _frameDataWindow = _cameraDisplay.CameraListObj;
             _frameDataWindow.SetActive(!_frameDataWindow.activeInHierarchy);
         });
 
@@ -179,6 +192,27 @@ public class GUIFuntion : MonoBehaviour
             Debug.Log("cancel");
         });
 
+        _settingsConfirmButton.onClick.AddListener(() =>
+        {
+            // Play sound
+            _buttonSound.Play();
+            // TODO
+
+            _settingsWindow.SetActive(false);
+            Debug.Log("confirm settings");
+
+        });
+
+        _settingsCancelButton.onClick.AddListener(() =>
+        {
+            // Play sound
+            _buttonSound.Play();
+
+            _settingsWindow.SetActive(false);
+            Debug.Log("cancel settings");
+        });
+
+        _settingsWindow.SetActive(false);
         _connectServerWindow.SetActive(false);
     }
     public void QuitClient()

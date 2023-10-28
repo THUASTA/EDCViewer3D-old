@@ -19,7 +19,7 @@ public class CameraDisplay : MonoBehaviour
         {
             RawImageList.Add(rawImage);
         }
-        CameraListObj.SetActive(false);
+        //CameraListObj.SetActive(false);
 
     }
 
