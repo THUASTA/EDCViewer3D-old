@@ -378,7 +378,7 @@ public class GUIFuntion : MonoBehaviour
     private HostConfigurationFromClient GetHostConfigFromClientMessage()
     {
         // Send packet
-        return new()
+        HostConfigurationFromClient message = new()
         {
             Players = Enumerable.Range(0, 2).Select(i =>
             {
@@ -443,5 +443,7 @@ public class GUIFuntion : MonoBehaviour
                 };
             }).ToList()
         };
+        Debug.Log(message);
+        return message;
     }
 }
