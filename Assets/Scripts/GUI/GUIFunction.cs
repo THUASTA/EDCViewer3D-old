@@ -7,8 +7,8 @@ using System.Net.WebSockets;
 using System.Threading;
 using Client = EDCViewer.Client.Client;
 using System.Collections.Generic;
-using static EDCViewer.Messages.CompetitionControlCommand;
 using System;
+using System.Linq;
 
 public class GUIFuntion : MonoBehaviour
 {
@@ -62,6 +62,11 @@ public class GUIFuntion : MonoBehaviour
     private List<TMP_Text> _valueMaxText;
 
     private List<TMP_Dropdown> _cameraDropdown;
+    private readonly List<int> _selectedCamera = new() { 0, 0 };
+    private List<TMP_Dropdown> _portDropdown;
+    private readonly List<string> _selectedPort = new() { "COM1","COM1"};
+
+    private List<Toggle> _showMask;
 
     public Client Client { get; private set; }
 
@@ -126,6 +131,16 @@ public class GUIFuntion : MonoBehaviour
         {
             GameObject.Find("Canvas/SettingsWindow/Player1/Player1Camera").GetComponent<TMP_Dropdown>(),
             GameObject.Find("Canvas/SettingsWindow/Player2/Player2Camera").GetComponent<TMP_Dropdown>(),
+        };
+        _portDropdown = new()
+        {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1Port").GetComponent<TMP_Dropdown>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2Port").GetComponent<TMP_Dropdown>(),
+        };
+        _showMask = new()
+        {
+            GameObject.Find("Canvas/SettingsWindow/Player1/Player1ShowMask").GetComponent<Toggle>(),
+            GameObject.Find("Canvas/SettingsWindow/Player2/Player2ShowMask").GetComponent<Toggle>(),
         };
 
         _startButton.onClick.AddListener(() =>
@@ -220,6 +235,12 @@ public class GUIFuntion : MonoBehaviour
 
             Client.AfterMessageReceiveEvent += AfterMessageReceivedEventHandler;
 
+            CompetitionControlCommand getConfigMessage = new ()
+            {
+                command = CompetitionControlCommand.Command.GetHostConfiguration
+            };
+            Client.Send(getConfigMessage);
+
             // TODO: Add the event handler
             //Client.AfterMessageReceiveEvent += OnAfterMessageReceiveEvent;
             _connectServerWindow.SetActive(false);
@@ -244,10 +265,9 @@ public class GUIFuntion : MonoBehaviour
             // Play sound
             _buttonSound.Play();
             // TODO
-            // Send packet
             if(Client is not null)
             {
-
+                Client.Send(GetHostConfigFromClientMessage());
 
                 _settingsWindow.SetActive(false);
                 Debug.Log("confirm settings");
@@ -263,6 +283,20 @@ public class GUIFuntion : MonoBehaviour
             _settingsWindow.SetActive(false);
             Debug.Log("cancel settings");
         });
+
+        for (int i = 0; i < 2; i++)
+        {
+            int currentIndex = i; 
+            _cameraDropdown[i].onValueChanged.AddListener((int index) =>
+            {
+                int.TryParse(_cameraDropdown[currentIndex].options[index].text,out int selectedCamera);
+                _selectedCamera[currentIndex]= selectedCamera;
+            });
+            _portDropdown[i].onValueChanged.AddListener((int index) =>
+            {
+                _selectedPort[currentIndex] = _portDropdown[currentIndex].options[index].text;
+            });
+        }
 
         _settingsWindow.SetActive(false);
         _connectServerWindow.SetActive(false);
@@ -304,7 +338,7 @@ public class GUIFuntion : MonoBehaviour
                     int SaturationCenter = configMessage.playerInfo[i].camera.recognition.SaturationCenter;
                     int SaturationRange = configMessage.playerInfo[i].camera.recognition.SaturationRange;
                     int ValueCenter = configMessage.playerInfo[i].camera.recognition.ValueCenter;
-                    int ValueRange = configMessage.playerInfo[i].camera.recognition.ValueCenter;
+                    int ValueRange = configMessage.playerInfo[i].camera.recognition.ValueRange;
 
                     _hueMinText[i].text = Math.Max(0, hueCenter - hueRange / 2).ToString();
                     _hueMaxText[i].text = Math.Min(255, hueCenter + hueRange / 2).ToString();
@@ -312,7 +346,6 @@ public class GUIFuntion : MonoBehaviour
                     _saturationMaxText[i].text = Math.Min(255, SaturationCenter + SaturationRange / 2).ToString();
                     _valueMinText[i].text = Math.Max(0, ValueCenter - ValueRange / 2).ToString();
                     _valueMaxText[i].text = Math.Min(255, ValueCenter + ValueRange / 2).ToString();
-
 
                 }
 
@@ -327,13 +360,88 @@ public class GUIFuntion : MonoBehaviour
                     _cameraDropdown[i].ClearOptions();
                     _cameraDropdown[i].AddOptions(cameraList);
                 }
-                // Update Port
 
+                // Update Port
+                List<string> portList = new();
+                foreach (string port in configMessage.AvailableSerialPorts)
+                {
+                    portList.Add(port);
+                }
+                for (int i = 0; i < 2; i++)
+                {
+                    _portDropdown[i].ClearOptions();
+                    _portDropdown[i].AddOptions(portList);
+                }
             }
         });
     }
-    private void Update()
+    private HostConfigurationFromClient GetHostConfigFromClientMessage()
     {
-        
+        // Send packet
+        return new()
+        {
+            Players = Enumerable.Range(0, 2).Select(i =>
+            {
+                int.TryParse(_hueMinText[i].text, out int hueMin);
+                int.TryParse(_hueMaxText[i].text, out int hueMax);
+                int.TryParse(_saturationMinText[i].text, out int saturationMin);
+                int.TryParse(_saturationMaxText[i].text, out int saturationMax);
+                int.TryParse(_valueMinText[i].text, out int valueMin);
+                int.TryParse(_valueMaxText[i].text, out int valueMax);
+
+
+                return new HostConfigurationFromClient.PlayerInfo()
+                {
+                    playerId = i,
+                    camera = new()
+                    {
+                        cameraId = _selectedCamera[i],
+
+                        recognition = new()
+                        {
+                            HueCenter = (hueMin + hueMax) / 2,
+                            HueRange = (hueMax - hueMin),
+                            SaturationCenter = (saturationMax + saturationMin) / 2,
+                            SaturationRange = (saturationMax - saturationMin),
+                            ValueCenter = (valueMax + valueMin) / 2,
+                            ValueRange = (valueMax - valueMin),
+                            // TODO
+                            MinArea = 0,
+                            ShowMask = _showMask[i].isOn
+                        },
+
+                        calibration = new()
+                        {
+                            topLeft = new()
+                            {
+                                x = 0,
+                                y = 0
+                            },
+                            topRight = new()
+                            {
+                                x = 0,
+                                y = 0
+                            },
+                            bottomLeft = new()
+                            {
+                                x = 0,
+                                y = 0
+                            },
+                            bottomRight = new()
+                            {
+                                x = 0,
+                                y = 0
+                            }
+                        }
+                    },
+                    serialPort = new()
+                    {
+                        PortName = _selectedPort[i],
+                        //TODO
+                        BaudRate = 115200,
+                    }
+                };
+            }).ToList()
+        };
     }
 }
