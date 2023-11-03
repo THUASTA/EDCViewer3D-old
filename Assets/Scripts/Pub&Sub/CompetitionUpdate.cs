@@ -134,6 +134,9 @@ namespace EDCViewer.Messages
                 [JsonProperty("playerId")]
                 public int playerId { get; init; }
 
+                [JsonProperty("mineId")]
+                public string mineId { get; init; }
+
                 [JsonProperty("itemType")]
                 public ItemType itemType { get; init; }
 
@@ -236,7 +239,7 @@ namespace EDCViewer.Messages
         public record Mine
         {
             [JsonProperty("mineId")]
-            public int mineId { get; init; }
+            public string mineId { get; init; }
 
             [JsonProperty("accumulatedOreCount")]
             public int accumulatedOreCount { get; init; }

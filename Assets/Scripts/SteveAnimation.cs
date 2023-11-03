@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class SteveAnimation : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class SteveAnimation : MonoBehaviour
     }
 
     
-    void Run(Vector3 target,float speed)
+    public void Run(Vector3 target,float speed)
     {
         if(Steve.transform.position != target)
         {
@@ -24,11 +25,25 @@ public class SteveAnimation : MonoBehaviour
             _ator.Play("SteveRun");
         }
     }
-    void Dig()
+    public void Dig(Vector3 target)
+    {
+        float RotationSpeed = 1f;
+        Steve.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(target), RotationSpeed);
+        _ator.Play("SteveDig");
+    }
+    public void PickUp()
     {
         _ator.Play("SteveDig");
     }
-    void Attack(Vector3 target)
+    public void PlaceBlock()
+    {
+        _ator.Play("SteveDig");
+    }
+    public void TryAttack()
+    {
+        _ator.Play("SteveAttack");
+    }
+    public void Attack(Vector3 target)
     {
         float RotationSpeed = 1f;
         Steve.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(target), RotationSpeed);
@@ -36,6 +51,7 @@ public class SteveAnimation : MonoBehaviour
         _ator.Play("SteveAttack");
         StartCoroutine(ArrowFly(target,MyArrow));
     }
+
     IEnumerator ArrowFly(Vector3 target,GameObject MyArrow)
     {
         float speed = 10;
@@ -58,6 +74,6 @@ public class SteveAnimation : MonoBehaviour
                 MyArrow.transform.position = target;
             }
         }
-        GameObject.Destroy(MyArrow);
+        Destroy(MyArrow);
     }
 }
