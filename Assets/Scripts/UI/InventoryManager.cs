@@ -11,32 +11,17 @@ public class InventoryManager : MonoBehaviour
     public GameObject slotGrid;
     public Slot slotPrefab;
     public ObjectDisplay Emerald;
-    public ObjectDisplay Stone;
+    public ObjectDisplay Wool;
     public delegate void ManageObject(ObjectDisplay objectDiaplay);
-    /// <summary>�������
-    /// public event ManageObject OnManageObject;
-    /// xxx.OnManageObject += myBag.ObjectManager;
-    /// xxx.OnManageObject += RefreshObject;
-    /// </summary>
-    /*
-    private void Awake()
-    {
-        if (instance != null)
-        {
-            Destroy(this);
-        }
-        instance = this;
-    }*/
+    public int playerId = -1;
 
-    void Start()
+    public void InventoryUpdate(int emeraldHeld, int woolHeld)
     {
-        Emerald.objectHeld = 1;
-    }
-    void Update()
-    {
-        //myBag.ObjectManager(Emerald);
-        //myBag.ObjectManager(Stone);
-        //RefreshObject();
+        Emerald.objectHeld = emeraldHeld;
+        Wool.objectHeld = woolHeld;
+        myBag.ObjectManager(Emerald);
+        myBag.ObjectManager(Wool);
+        RefreshObject();
     }
     public void CreatNewObject(ObjectDisplay objectDiaplay)
     {

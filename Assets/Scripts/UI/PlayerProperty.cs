@@ -12,18 +12,12 @@ public class PlayerProperty : MonoBehaviour
     public GameObject HPText;
     public GameObject ATKText;
     public GameObject APText;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public int playerId = -1;
 
-    // Update is called once per frame
-    void Update()
+    public void maxHP(int maxHP)
     {
-        
+        HPSlider.GetComponent<Slider>().maxValue = maxHP;
     }
-
     public void HPFluctuation(int HP)
     {
         HPSlider.GetComponent<Slider>().value = HP;

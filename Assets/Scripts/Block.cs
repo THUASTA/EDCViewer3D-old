@@ -33,7 +33,11 @@ public class Block : MonoBehaviour
 
     }
 
-    void MaterialAdd(Vector3 MaterialPosition)
+    public void MaterialUpdate(int height)
+    {
+        go.GetComponent<MeshRenderer>().material = Materials[height];
+    }
+    public void MaterialAdd(Vector3 MaterialPosition)
     {
         if( materialCount < 8 && transform.position == MaterialPosition )
         {
@@ -42,7 +46,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    void MaterialRemove(Vector3 MaterialPosition)
+    public void MaterialRemove(Vector3 MaterialPosition)
     {
         if( materialCount > 0 && transform.position == MaterialPosition )
         {
