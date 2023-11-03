@@ -6,10 +6,10 @@ using Newtonsoft.Json.Linq;
 namespace EDCViewer.Messages
 {
 
-    internal record EmptyMessage : Message
+    public record EmptyMessage :Message
     {
-
-        [JsonProperty("type")]
+        [JsonConverter(typeof(CommandEnumConverter))]
+        [JsonProperty("messageType")]
         public override IMessage.MessageType Type { get; }
     }
 }

@@ -33,23 +33,22 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 如果获得重复物品，更新背包显示
+    /// 锟斤拷锟斤拷锟斤拷锟截革拷锟斤拷品锟斤拷锟斤拷锟铰憋拷锟斤拷锟斤拷示
     /// </summary>
     public void RefreshObject()
     {
-        for (int i = 0; i < slotGrid.transform.childCount; i++) 
-        {
-            if (slotGrid.transform.childCount == 0) 
-            {
-                break;
-            }
-            Destroy(slotGrid.transform.GetChild(i).gameObject);
-        }
+        //for (int i = 0; i < instance.transform.childCount; i++) 
+        //{
+        //    if (instance.slotGrid.transform.childCount == 0) 
+        //    {
+        //        break;
+        //    }
+        //    Destroy(instance.slotGrid.transform.GetChild(i).gameObject);
+        //}
 
-        for (int i = 0; i < myBag.objectList.Count; i++)
-        {
-            CreatNewObject(myBag.objectList[i]);
-        }
-
+        //for (int i = 0; i < instance.myBag.objectList.Count; i++)
+        //{
+        //    CreatNewObject(instance.myBag.objectList[i]);
+        //}
     }
 }

@@ -9,8 +9,9 @@ namespace System.Runtime.CompilerServices
 namespace EDCViewer.Messages
 {
 
-    internal abstract record Message : IMessage
+    public abstract record Message : IMessage
     {
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public abstract IMessage.MessageType Type { get; }
 

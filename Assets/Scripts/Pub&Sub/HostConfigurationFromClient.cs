@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace EDCViewer.Messages
 {
-    internal record HostConfigurationFromClient : Message
+    public record HostConfigurationFromClient : Message
     {
         public record PlayerInfo
         {
 
             [JsonProperty("playerId")]
-            public int PlayerId { get; init; }
+            public int playerId { get; init; }
 
             [JsonProperty("camera")]
             public Camera camera { get; init; } = new();
@@ -20,7 +20,7 @@ namespace EDCViewer.Messages
             public record Camera
             {
                 [JsonProperty("cameraId")]
-                public int CameraId { get; init; }
+                public int cameraId { get; init; }
 
                 [JsonProperty("calibration")]
                 public Calibration calibration { get; init; } = new();
@@ -37,7 +37,7 @@ namespace EDCViewer.Messages
                     public TopRight topRight { get; init; } = new();    
 
                     [JsonProperty("bottomLeft")]
-                    public BottomLeft bttomLeft { get; init; } = new();
+                    public BottomLeft bottomLeft { get; init; } = new();
 
                     [JsonProperty("bottomRight")]
                     public BottomRight bottomRight { get; init; } = new();    
@@ -119,6 +119,7 @@ namespace EDCViewer.Messages
 
         
 
+        [JsonConverter(typeof(CommandEnumConverter))]
         [JsonProperty("messageType")]
         public override IMessage.MessageType Type => IMessage.MessageType.HostConfigurationFromClient;
 
@@ -126,7 +127,7 @@ namespace EDCViewer.Messages
         public string Token { get; init; } = string.Empty;      
 
         [JsonProperty("players")]
-        public List<PlayerInfo> Player { get; init; } = new();
+        public List<PlayerInfo> Players { get; init; } = new();
 
     }
 }
